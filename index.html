@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ISSPRO CR Generation</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>ISSPRO CR Request Form</h1>
+    <p><span class="required">*</span> Required fields</p>
+    <form id="main-form">
+
+        <!-- Custom Alert Modal -->
+        <div id="customAlert" class="modal">
+            <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Reminder</h2>
+            <p>Please send the generated PDF, any attached files, and any additional comments to <strong>danielb@isspro.com</strong>.</p>
+            <button id="modal-ok-btn">OK</button>
+            </div>
+        </div>
+
+        <!-- Basic Info Section -->
+        <fieldset>
+            <legend>Basic Information</legend>
+
+            <div class="form-group">
+                <label for="companyName">Company Name<span class="required">*</span></label>
+                <input id="companyName" name="companyName" required />
+            </div>
+
+            <div class="form-group">
+                <label for="companyAddress">Address<span class="required">*</span></label>
+                <input id="companyAddress" name="companyAddress" required />
+            </div>
+
+            <div class="form-group">
+                <label for="companyCityStateZip">City, State, ZIP<span class="required">*</span></label>
+                <input id="companyCityStateZip" name="companyCityStateZip" required />
+            </div>
+
+            <div class="form-group">
+                <label for="contactName">Contact Name<span class="required">*</span></label>
+                <input id="contactName" name="contactName" required />
+            </div>
+
+            <div class="form-group">
+                <label for="contactTitle">Contact Title<span class="required">*</span></label>
+                <input id="contactTitle" name="contactTitle" required />
+            </div>
+
+            <div class="form-group">
+                <label for="contactEmail">Contact Email<span class="required">*</span></label>
+                <input id="contactEmail" name="contactEmail" type="email" required />
+            </div>
+
+            <div class="form-group">
+                <label for="contactPhone">Contact Phone<span class="required">*</span></label>
+                <input id="contactPhone" name="contactPhone" required />
+            </div>
+
+            <div class="form-group">
+                <label for="contactFax">Contact Fax (optional)</label>
+                <input id="contactFax" name="contactFax" />
+            </div>
+
+            <div class="form-group">
+                <label for="addContactDropdown">Would you like to add an additional contact?</label>
+                <select id="addContactDropdown">
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                </select>
+            </div>
+
+            <div id="additionalContactsContainer">
+                <fieldset id="additionalContact1" style="display: none;">
+                    <legend>Additional Contact 1</legend>
+                    <div class="form-group">
+                        <label>Contact Name<span class="required">*</span></label>
+                        <input name="additionalContact1Name" />
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Title<span class="required">*</span></label>
+                        <input name="additionalContact1Title" />
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Email<span class="required">*</span></label>
+                        <input type="email" name="additionalContact1Email" />
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Phone<span class="required">*</span></label>
+                        <input name="additionalContact1Phone" />
+                    </div>
+                </fieldset>
+            </div>
+            
+        </fieldset>
+
+        <!-- Shipping Section -->
+        <fieldset>
+            <legend>Shipping Information</legend>
+
+            <div class="form-group">
+                <label for="packagingReqs">Packaging Requirements</label>
+                <input id="packagingReqs" name="packagingReqs" />
+            </div>
+
+            <div class="form-group">
+                <label for="shippingReqs">Shipping Requirements</label>
+                <input id="shippingReqs" name="shippingReqs" />
+            </div>
+
+            <div class="form-group">
+                <label for="uploadDocs">Upload Additional Documentation</label>
+                <input type="file" id="uploadDocs" name="uploadDocs" />
+            </div>
+            <p id="uploadNotice" class="notice"></p>
+        </fieldset>
+
+        <!-- Product Timeline -->
+        <fieldset>
+            <legend>Product Timeline</legend>
+
+            <div class="form-group">
+                <label for="productionDate">Client Production Date (MM/YY)<span class="required">*</span></label>
+                <input id="productionDate" name="productionDate" pattern="\d{2}/\d{2}" required />
+            </div>
+
+            <div class="form-group">
+                <label for="annualUsage">Estimated Annual Usage<span class="required">*</span></label>
+                <input id="annualUsage" name="annualUsage" type="number" min="1" required />
+            </div>
+
+            <div class="form-group">
+                <label for="requirePrototypes">Will you require prototypes?<span class="required">*</span></label>
+                <select id="requirePrototypes" name="requirePrototypes">
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                </select>
+            </div>
+
+            <div id="prototypeCountContainer" class="form-group" style="display: none;">
+                <label for="prototypeCount">Amount Required<span class="required">*</span></label>
+                <input type="number" id="prototypeCount" name="prototypeCount" min="1"/>
+            </div>
+        </fieldset>
+
+        <!-- Quality Requirements Section -->
+        <fieldset>
+            <legend>Quality Requirements</legend>
+
+            <!-- Quality Manager Info -->
+            <div class="form-group">
+                <label for="qualityManagerName">Quality Manager Name<span class="required">*</span></label>
+                <input id="qualityManagerName" name="qualityManagerName" required />
+            </div>
+
+            <div class="form-group">
+                <label for="qualityManagerEmail">Quality Manager Email<span class="required">*</span></label>
+                <input id="qualityManagerEmail" name="qualityManagerEmail" type="email" required />
+            </div>
+
+            <div class="form-group">
+                <label for="qualityManagerPhone">Quality Manager Phone<span class="required">*</span></label>
+                <input id="qualityManagerPhone" name="qualityManagerPhone" required />
+            </div>
+
+            <div class="form-group">
+                <label for="qualityManagerFax">Quality Manager Fax (optional)</label>
+                <input id="qualityManagerFax" name="qualityManagerFax" />
+            </div>
+
+            <!-- Quality Documents -->
+            <div class="form-group">
+                <label>Quality Documents Required</label>
+                <div class="checkbox-and-comment">
+                    <div class="checkbox-group">
+                    <label><input type="checkbox" name="firstArticle" /> First Article</label>
+                    <label><input type="checkbox" name="psw" /> PSW</label>
+                    <label><input type="checkbox" name="certOfCompliance" /> Certificate of Compliance</label>
+                    <label><input type="checkbox" name="otherDocs" id="otherDocs" /> Other</label>
+                  </div>
+                  <div id="otherDocsCommentContainer" style="display:none;">
+                    <label for="otherDocsComment">Other Documents Comment</label>
+                    <textarea id="otherDocsComment" name="otherDocsComment"></textarea>
+                  </div>
+                </div>
+            </div>
+
+            <!-- PPAP Requirement -->
+            <div class="form-group">
+                <label for="ppapRequired">PPAP Required?<span class="required">*</span></label>
+                <select id="ppapRequired" name="ppapRequired" required>
+                  <option value="No">No</option>
+                  <option value="Yes">Yes</option>
+                </select>
+              </div>
+              
+              <div id="ppapLevelGroup" class="form-group" style="display: none;">
+                <label for="ppapLevel">PPAP Level<span class="required">*</span></label>
+                <select name="ppapLevelSelector" id="ppapLevels">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+            </div>
+
+            <!-- Reference Document Upload -->
+            <div class="form-group">
+                <label for="qualityDocUpload">Upload Reference Document</label>
+                <input type="file" id="qualityDocUpload" name="qualityDocUpload" />
+            </div>
+            <p id="qualityDocUploadNotice" class="notice"></p>
+        </fieldset>
+
+        <!-- Mechanical Requirements Section -->
+        <fieldset>
+            <legend>Mechanical Requirements</legend>
+
+            <!-- Part Design/Modification -->
+            <div class="form-group">
+                <label for="partDesign">New Design or Modification of an Existing P/N?<span class="required">*</span></label>
+                <select id="partDesign" name="partDesign" required>
+                    <option value="NewDesign">New Design</option>
+                    <option value="ModifyPartNumber">Modify Existing Part Number</option>
+                </select>
+            </div>
+
+            <!-- Modification Details (shown only if Modify is selected) -->
+            <div id="modificationDetails" style="display: none; margin-top: 1em;">
+                <div class="form-group">
+                    <label for="existingPartNumber">Existing Part Number<span class="required">*</span></label>
+                    <input type="text" id="existingPartNumber" name="existingPartNumber" />
+                </div>
+                <div class="form-group">
+                    <label for="newPartNumber">New Part Number<span class="required">*</span></label>
+                    <input type="text" id="newPartNumber" name="newPartNumber" />
+                </div>
+                <div class="form-group">
+                    <label for="modificationRequested">Modification Requested<span class="required">*</span></label>
+                    <textarea id="modificationRequested" name="modificationRequested"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="modificationDocUpload">Upload Reference Document</label>
+                    <input type="file" id="modificationDocUpload" name="modificationDocUpload" />
+                </div>
+            </div>
+
+            <div id="newDetails" style="display: none; margin-top: 1em;">
+                <div class="form-group">
+                    <label for="clientPartNumber">Client Part Number (TBD if unknown)<span class="required">*</span></label>
+                    <input type="text" id="clientPartNumber" name="clientPartNumber" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="senderLength">Sender Length <span class="required">*</span></label>
+                    <input type="text" id="senderLength" name="senderLength" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="senderLengthUnits">Sender Units <span class="required">*</span></label>
+                    <select id="senderLengthUnits" name="senderLengthUnits" required>
+                        <option value="">-- Select --</option>
+                        <option value="Inch">Inches</option>
+                        <option value="mm">Millimeters</option>
+                    </select>
+                </div>
+
+                <!-- Fluid Usage -->
+                <div class="form-group">
+                    <label for="fluidUsage">Fluid Usage<span class="required">*</span></label>
+                    <select id="fluidUsage" name="fluidUsage" required>
+                        <option value="">-- Please Select --</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Unleaded">Unleaded</option>
+                        <option value="HydraulicFluid">Hydraulic Fluid</option>
+                        <option value="GreyWater">Grey Water</option>
+                        <option value="Antifreeze">Antifreeze</option>
+                        <option value="Biodiesel">Biodiesel</option>
+                        <option value="HighOctaneEthanol">High Octane/Ethanol</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Fluid Usage Details (shown only for Biodiesel, High Octane/Ethanol, or Other) -->
+                <div id="fluidUsageDetails" class="form-group" style="display: none;">
+                    <label for="fluidUsageDetailsInput">Fluid % or Details<span class="required">*</span></label>
+                    <input type="text" id="fluidUsageDetailsInput" name="fluidUsageDetailsInput" />
+                </div>
+
+                <!-- Fullest Point -->
+               <div class="form-group">
+                    <label for="fullestPoint">Fullest Point<span class="required">*</span></label>
+                    <select id="fullestPoint" name="fullestPoint" required>
+                       <option value="">-- Please Select --</option>
+                       <option value="Top">Top of Tank</option>
+                       <option value="Base">Base of Filler Neck</option>
+                       <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Fullest Point Details (shown only if Other is selected) -->
+                <div id="fullestPointDetails" style="display: none; margin-top: 1em;">
+                    <div class="form-group">
+                        <label for="fullestPointSpecify">Specify Fullest Point Location<span class="required">*</span></label>
+                        <input type="text" id="fullestPointSpecify" name="fullestPointSpecify" />
+                    </div>
+                    <div class = "form-group">
+                        <label for="fullestPointUnits">Fullest Point Units <span class="required">*</span></label>
+                        <select id="fullestPointUnits" name="fullestPointUnits" required>
+                            <option value="">-- Select --</option>
+                            <option value="Inch">Inches</option>
+                            <option value="mm">Millimeters</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Pressurized Tank -->
+                <div class="form-group">
+                    <label for="pressurizedTank">Is this a Pressurized Tank?<span class="required">*</span></label>
+                    <select id="pressurizedTank" name="pressurizedTank" required>
+                        <option value="">-- Please Select --</option>
+                        <option value="No">No</option>
+                        <option value="Yes">Yes</option>
+                    </select>
+                </div>
+
+                <!-- Pressure Unit Selection (only shown if Yes) -->
+                <div id="pressureUnitGroup" class="form-group" style="display: none;">
+                    <label for="pressureUnit">Select Pressure Unit<span class="required">*</span></label>
+                    <select id="pressureUnit" name="pressureUnit">
+                        <option value="">-- Please Select --</option>
+                        <option value="PSI">PSI</option>
+                        <option value="Bar">Bar</option>
+                    </select>
+                </div>
+
+                <!-- Empty Point -->
+                <div class="form-group">
+                    <label for="emptyPoint">Empty Point<span class="required">*</span></label>
+                    <select id="emptyPoint" name="emptyPoint" required>
+                        <option value="">-- Please Select --</option>
+                        <option value="Default">ISSPRO Default (Lowest Possible)</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Empty Point Details (shown only if Other is selected) -->
+                <div id="emptyPointDetails" style="display: none; margin-top: 1em;">
+                    <div class="form-group">
+                        <label for="emptyPointSpecify">Specify Empty Point Location<span class="required">*</span></label>
+                        <input type="text" id="emptyPointSpecify" name="emptyPointSpecify" />
+                    </div>
+                    <div class = "form-group">
+                        <label for="emptyPointUnits">Empty Point Units <span class="required">*</span></label>
+                        <select id="emptyPointUnits" name="emptyPointUnits" required>
+                            <option value="">-- Select --</option>
+                            <option value="Inch">Inches</option>
+                            <option value="mm">Millimeters</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Mounting Bolt Pattern -->
+                <div class="form-group">
+                    <label for="boltPattern">Mounting Bolt Pattern<span class="required">*</span></label>
+                    <select id="boltPattern" name="boltPattern" required>
+                        <option value="">-- Please Select --</option>
+                        <option value="StandardSAE">Standard SAE</option>
+                        <option value="Symmetrical">Symmetrical</option>
+                        <option value="RFM">RFM (Retaining Flange Mount)</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Other Bolt Pattern Text Box (hidden by default) -->
+                <div id="otherBoltPatternGroup" class="form-group" style="display: none;">
+                    <label for="otherBoltPattern">Specify Bolt Pattern<span class="required">*</span></label>
+                    <input type="text" id="otherBoltPattern" name="otherBoltPattern">
+                </div>
+
+                <!-- Mounting Fasteners -->
+                <div class="form-group">
+                    <label for="mountingFasteners">Mounting Fasteners<span class="required">*</span></label>
+                    <select id="mountingFasteners" name="mountingFasteners">
+                        <option value="">Select...</option>
+                        <option value="Rubber Gasket">Rubber Gasket</option>
+                        <option value="Screw, 10-32 x 1&quot; PH Pan">Screw, 10-32 x 1" PH Pan</option>
+                        <option value="Screw, 10-32 x 1.25&quot; PH Pan">Screw, 10-32 x 1.25" PH Pan</option>
+                        <option value="Screw, 10-32 x 1.25&quot; PH Pan SS">Screw, 10-32 x 1.25" PH Pan SS</option>
+                        <option value="Screw, M5 x 0.08 x 30mm Hex Zinc">Screw, M5 x 0.08 x 30mm Hex Zinc</option>
+                        <option value="Screw, 10-24 x 1&quot; PH Pan">Screw, 10-24 x 1" PH Pan</option>
+                        <option value="Screw, 10-24 x 1.25&quot; PH Pan SS">Screw, 10-24 x 1.25" PH Pan SS</option>
+                        <option value="Screw, 10-24 x 1.75&quot; Hex SS">Screw, 10-24 x 1.75" Hex SS</option>
+                        <option value="Screw, M5 x 0.8 x 25mm SP Brass">Screw, M5 x 0.8 x 25mm SP Brass</option>
+                        <option value="Lock Washers">Lock Washers</option>
+                        <option value="Flat Washers">Flat Washers</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+      
+                <!-- Mounting Text Box (hidden by default) -->
+                <div id="mountingFastenersOtherContainer" class="form-group" style="display: none;">
+                    <label for="mountingFastenersOtherInput">Specify Mounting Fastener:<span class="required">*</span></label>
+                    <input type="text" id="mountingFastenersOtherInput" name="mountingFastenersOtherInput">
+                </div>
+
+                <!-- Cap Profile Selection -->
+                <div class="form-group">
+                    <label for="capProfile">Cap Profile Selection<span class="required">*</label>
+                    <select id="capProfile" name="capProfile">
+                        <option value="">Select...</option>
+                        <option value="Standard Height">Standard Height</option>
+                        <option value="Potted">Potted</option>
+                        <option value="Low Profile">Low Profile</option>
+                        <option value="Standard Height, Non Potted">Standard Height, Non Potted</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Fluid Movement Through Cap -->
+            <div class="form-group">
+                <label for="fluidMovement">Fluid Movement Through Cap<span class="required">*</span></label>
+                <select id="fluidMovement" name="fluidMovement" required>
+                    <option value="">Select...</option>
+                    <option value="None">None</option>
+                    <option value="Return Only">Return Only</option>
+                    <option value="Supply and Return">Supply and Return</option>
+                </select>
+            </div>
+  
+            <!-- Return Only Details (hidden by default) -->
+            <div id="returnOnlyDetails" style="display: none;">
+                <div class="form-group">
+                    <label for="returnFittingDetails">Return Fitting Details (PN, Size, Angle)<span class="required">*</span></label>
+                    <input type="text" id="returnFittingDetails" name="returnFittingDetails">
+                </div>
+  
+                <div class="form-group">
+                    <label for="returnTubeLength">Return Tube Length (from Flange)<span class="required">*</span></label>
+                    <input type="text" id="returnTubeLength" name="returnTubeLength">
+                    <select id="returnTubeLengthUnits" name="returnTubeLengthUnits">
+                        <option value="">Select Units...</option>
+                        <option value="Inches">Inches</option>
+                        <option value="Millimeters">Millimeters</option>
+                    </select>
+                </div>
+            </div>
+  
+            <!-- Supply and Return Additional Details (hidden by default) -->
+            <div id="supplyAndReturnDetails" style="display: none;">
+                <div class="form-group">
+                    <label for="supplyFittingDetails">Supply Fitting Details (PN, Size, Angle)<span class="required">*</span></label>
+                    <input type="text" id="supplyFittingDetails" name="supplyFittingDetails">
+                </div>
+  
+                <div class="form-group">
+                    <label for="supplyTubeLength">Supply Tube Length (from Flange)<span class="required">*</span></label>
+                    <input type="text" id="supplyTubeLength" name="supplyTubeLength">
+                    <select id="supplyTubeLengthUnits" name="supplyTubeLengthUnits">
+                        <option value="">Select Units...</option>
+                        <option value="Inches">Inches</option>
+                        <option value="Millimeters">Millimeters</option>
+                    </select>
+                </div>
+  
+                <div class="form-group">
+                    <label for="supplyFilterDetails">Supply Filter Details (PN, Size, Filtration, etc.)<span class="required">*</span></label>
+                    <input type="text" id="supplyFilterDetails" name="supplyFilterDetails">
+                </div>
+            </div>
+
+        </fieldset>
+
+        <!-- Sender Output Connection -->
+        <fieldset>
+            <legend>Sender Output Requirements</legend>
+
+            <div class="form-group">
+                <label for="connectorPN">Connector PN<span class="required">*</span></label>
+                <input type="text" id="connectorPN" name="connectorPN" required>
+            </div>
+
+            <div class="form-group">
+                <label for="connectorType">Connector Type<span class="required">*</span></label>
+                <select id="connectorType" name="connectorType">
+                    <option value="Wire Harness">Wire Harness</option>
+                    <option value="Integral Connector">Integral Connector</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <!-- Connector Input Textbox (hidden by default) -->
+            <div id="connectorOtherContainer" class="form-group" style="display: none;">
+                <label for="connectorOtherInput">Specify Connector Type<span class="required">*</span></label>
+                <input type="text" id="connectorOtherInput" name="connectorOtherInput" required>
+            </div>
+
+            <div class="form-group">
+                <label for="connectorSupplier">Connector Supplier</label>
+                <input type="text" id="connectorSupplier" name="connectorSupplier">
+            </div>
+
+            <!-- Harness Length Details (hidden by default) -->
+            <div id="harnessLengthDetails" style="display: none;">
+                <div class="form-group">
+                    <label for="harnessLength">Harness Length<span class="required">*</span></label>
+                    <input type="text" id="harnessLength" name="harnessLength">
+                    <select id="harnessLengthUnits" name="harnessLengthUnits">
+                        <option value="">Select Units...</option>
+                        <option value="Inches">Inches</option>
+                        <option value="Millimeters">Millimeters</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- System Voltage -->
+            <div class="form-group">
+                <label for="systemVoltage">System Voltage (Integer or Range)<span class="required">*</span></label>
+                <input type="text" id="systemVoltage" name="systemVoltage" required>
+            </div>
+
+            <div class="form-group">
+                <label for="senderOutput">Sender Output<span class="required">*</span></label>
+                <select id="senderOutput" name="senderOutput">
+                    <option value="Resistance">Resistance</option>
+                    <option value="Voltage">Voltage</option>
+                </select>
+            </div>
+
+            <!-- Resistance Sender Options -->
+            <div id="resistanceSenderOptions" style="display: none;">
+                <div class="form-group">
+                    <label for="resistanceAtFull">Resistance at Full (Ohms)<span class="required">*</span></label>
+                    <input type="text" id="resistanceAtFull" name="resistanceAtFull">
+                </div>
+                <div class="form-group">
+                    <label for="resistanceAtEmpty">Resistance at Empty (Ohms)<span class="required">*</span></label>
+                    <input type="text" id="resistanceAtEmpty" name="resistanceAtEmpty">
+                </div>
+                <div class="form-group">
+                    <label for="customResistance">Custom Resistance Table?<span class="required">*</span></label>
+                    <select id="customResistance" name="customResistance">
+                        <option value="No">No</option>
+                        <option value="Yes">Yes</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="customResistanceOptions" style="display: none;">
+                <div class="form-group">
+                    <label for="tableStepCount">How many steps?<span class="required">*</span></label>
+                    <input type="number" id="tableStepCount" name="tableStepCount" min="2" max="20">
+                </div>
+                <div id="generatedResistanceTableContainer"></div>
+            </div>
+
+            <!-- Voltage Sender Options -->
+            <div id="voltageSenderOptions" style="display: none;">
+                <div class="form-group">
+                    <label for="voltageAtFull">Voltage at Full (V)<span class="required">*</span></label>
+                    <input type="text" id="voltageAtFull" name="voltageAtFull">
+                </div>
+                <div class="form-group">
+                    <label for="voltageAtEmpty">Voltage at Empty (V)<span class="required">*</span></label>
+                    <input type="text" id="voltageAtEmpty" name="voltageAtEmpty">
+                </div>
+            </div>
+
+            <!-- Alarms -->
+            <div class="form-group">
+                <label for="senderAlarms">Sender Alarm Levels (N/A if No Alarms)<span class="required">*</span></label>
+                <input type="text" id="senderAlarms" name="senderAlarms" required>
+            </div>
+
+            <!-- Pin Out Table -->
+            <div id="generatedSignalTableContainer"></div>
+
+        </fieldset>
+
+        <!-- Additional Information -->
+        <fieldset>
+            <legend>Additional Information</legend>
+
+            <!-- Additional Information Upload -->
+            <div class="form-group">
+                <label for="additionalDocUpload">Upload Additonal Documentation (Tank Drawings, Pinout Diagrams, Reference Documents)</label>
+                <input type="file" id="additionalDocUpload" name="additionalDocUpload" />
+            </div>
+            <p id="additionalDocUploadNotice" class="notice"></p>
+
+            <div class="form-group">
+                <label for="additionalDetails">Any Additional Comments</label>
+                <input type="text" id="additionalDetails" name="additionalDetails">
+            </div>
+
+        </fieldset>
+
+        <button id="generate-pdf-btn" type="submit">Generate PDF</button>
+    </form>
+
+    <div id="result" style="display:none;">
+      <h2>All data collected!</h2>
+      <p>You can now download your PDF below.</p>
+      <button id="downloadBtn">Download PDF</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.1/jspdf.umd.min.js"></script>
+</body>
+</html>
