@@ -135,7 +135,8 @@
 
             <div class="form-group">
                 <label for="requirePrototypes">Will you require prototypes?<span class="required">*</span></label>
-                <select id="requirePrototypes" name="requirePrototypes">
+                <select id="requirePrototypes" name="requirePrototypes" required>
+                    <option value="">Select...</option>
                     <option value="no">No</option>
                     <option value="yes">Yes</option>
                 </select>
@@ -193,6 +194,7 @@
             <div class="form-group">
                 <label for="ppapRequired">PPAP Required?<span class="required">*</span></label>
                 <select id="ppapRequired" name="ppapRequired" required>
+                  <option value="">Select...</option>
                   <option value="No">No</option>
                   <option value="Yes">Yes</option>
                 </select>
@@ -225,6 +227,7 @@
             <div class="form-group">
                 <label for="partDesign">New Design or Modification of an Existing P/N?<span class="required">*</span></label>
                 <select id="partDesign" name="partDesign" required>
+                    <option value="">Select...</option>
                     <option value="NewDesign">New Design</option>
                     <option value="ModifyPartNumber">Modify Existing Part Number</option>
                 </select>
@@ -487,7 +490,8 @@
 
             <div class="form-group">
                 <label for="connectorType">Connector Type<span class="required">*</span></label>
-                <select id="connectorType" name="connectorType">
+                <select id="connectorType" name="connectorType" required>
+                    <option value="">Select...</option>
                     <option value="Wire Harness">Wire Harness</option>
                     <option value="Integral Connector">Integral Connector</option>
                     <option value="Other">Other</option>
@@ -526,7 +530,8 @@
 
             <div class="form-group">
                 <label for="senderOutput">Sender Output<span class="required">*</span></label>
-                <select id="senderOutput" name="senderOutput">
+                <select id="senderOutput" name="senderOutput" required>
+                    <option value="">Select...</option>
                     <option value="Resistance">Resistance</option>
                     <option value="Voltage">Voltage</option>
                 </select>
@@ -545,6 +550,7 @@
                 <div class="form-group">
                     <label for="customResistance">Custom Resistance Table?<span class="required">*</span></label>
                     <select id="customResistance" name="customResistance">
+                        <option value="">Select...</option>
                         <option value="No">No</option>
                         <option value="Yes">Yes</option>
                     </select>
@@ -602,12 +608,6 @@
 
         <button id="generate-pdf-btn" type="submit">Generate PDF</button>
     </form>
-
-    <div id="result" style="display:none;">
-      <h2>All data collected!</h2>
-      <p>You can now download your PDF below.</p>
-      <button id="downloadBtn">Download PDF</button>
-    </div>
   </div>
 
   <script src="script.js"></script>
