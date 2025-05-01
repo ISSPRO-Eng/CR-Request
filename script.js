@@ -317,28 +317,45 @@ document.addEventListener('DOMContentLoaded', function () {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     let y = 10;
-
+  
+    const formatKey = key => key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  
     doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
     doc.text('ISSPRO CR Request Summary', 10, y);
     y += 10;
-
+  
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+  
     formData.forEach((value, key) => {
-      if (value instanceof File) {
-        if (value.name) {
-          doc.text(`${key}: ${value.name}`, 10, y);
-          y += 10;
-        }
-      } else {
-        doc.text(`${key}: ${value}`, 10, y);
-        y += 10;
+      const keyLabel = `${formatKey(key)}: `;
+      let textValue = value instanceof File ? value.name : value;
+    
+      if (textValue === null || textValue === undefined || textValue === '') {
+        textValue = 'N/A';
       }
-
+    
+      const splitText = doc.splitTextToSize(`${keyLabel}${textValue}`, 180);
+      doc.text(splitText, 10, y);
+      y += splitText.length * 8;
+    
       if (y > 270) {
         doc.addPage();
         y = 10;
       }
     });
-
+  
+    const addFooters = () => {
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(10);
+        doc.text(`Page ${i} of ${pageCount}`, 200, 290, null, null, 'right');
+      }
+    };
+  
+    addFooters();
     doc.save('ISSPRO_CR_Request.pdf');
   }
 
@@ -346,32 +363,39 @@ document.addEventListener('DOMContentLoaded', function () {
     const requiredFields = form.querySelectorAll('[required]');
     let isValid = true;
     let missingFields = [];
-
+    let firstInvalidField = null;
+  
     requiredFields.forEach(field => {
+      // Reset previous styles
+      field.style.border = '';
+  
       if (!field.value.trim()) {
+        if (!firstInvalidField) {
+          firstInvalidField = field;
+        }
         isValid = false;
         missingFields.push(field.name || field.id);
+        // Add red border
+        field.style.border = '2px solid red';
       }
     });
-
+  
     if (!isValid) {
+      firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      firstInvalidField.focus();
       alert('Please fill in the following required fields: ' + missingFields.join(', '));
     }
-
+  
     return isValid;
   }
 
-  downloadBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-    if (!validateForm()) return;
-
-    const formData = new FormData(form);
-    generatePDF(formData);
-  });
-
   // Replace this selector with your actual Generate PDF button's ID or class
 document.getElementById('generate-pdf-btn').addEventListener('click', function (e) {
-  e.preventDefault(); // Optional: prevent form submit
+  e.preventDefault();
+  if (!validateForm()) return;
+
+  const formData = new FormData(form);
+  generatePDF(formData);
   document.getElementById('customAlert').style.display = 'block';
 });
 
