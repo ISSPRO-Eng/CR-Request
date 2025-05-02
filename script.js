@@ -57,7 +57,6 @@ document.addEventListener('DOMContentLoaded', function () {
         { req: 'Req', signal: 'Sender (Voltage In)', required: true },
         { req: 'Opt', signal: 'Voltage Output' },
         { req: 'Req', signal: 'Ground', required: true },
-        { req: 'Opt', signal: 'Alarm' },
         { req: 'Opt', signal: 'Alarm' }
     ];
 
@@ -119,12 +118,15 @@ document.addEventListener('DOMContentLoaded', function () {
     {
       trigger: 'otherDocs',
       triggerType: 'checked',
-      target: 'otherDocsCommentContainer'
+      target: 'otherDocsCommentContainer',
+      requiredFields: ['otherDocsComment'],
+      displayType: 'flex'
     },
     {
       trigger: 'ppapRequired',
       showValue: 'Yes',
       target: 'ppapLevelGroup',
+      requiredFields: ['ppapLevels'],
       displayType: 'flex'
     },
     {
@@ -138,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
       showValue: 'NewDesign',
       target: 'newDetails',
       requiredFields: ['clientPartNumber', 'senderLength', 'senderLengthUnits', 'fluidUsage', 'fullestPoint', 
-                       'pressurizedTank', 'emptyPoint', 'boltPattern', 'mountingFasteners', 'capProfile']
+                       'pressurizedTank', 'emptyPoint', 'boltPattern', 'mountingFasteners', 'capProfile', 'fluidMovement']
     },
     {
       trigger: 'fluidUsage',
@@ -157,8 +159,8 @@ document.addEventListener('DOMContentLoaded', function () {
       trigger: 'pressurizedTank',
       showValue: 'Yes',
       target: 'pressureUnitGroup',
-      requiredFields: ['pressureUnit'],
-      displayType: 'flex'
+      requiredFields: ['pressureValue', 'pressureUnit'],
+      displayType: 'block'
     },
     {
       trigger: 'emptyPoint',
@@ -193,6 +195,13 @@ document.addEventListener('DOMContentLoaded', function () {
       target: 'supplyAndReturnDetails',
       requiredFields: ['supplyFittingDetails', 'supplyTubeLength', 'supplyTubeLengthUnits', 'supplyFilterDetails'],
       displayType: 'block'
+    },
+    {
+      trigger: 'connectorType',
+      showValue: 'Wire Harness',
+      target: 'connectorHarnessLengthContainer',
+      requiredFields: ['connectorHarnessLengthInput'],
+      displayType: 'flex'
     },
     {
       trigger: 'connectorType',
@@ -235,6 +244,7 @@ document.addEventListener('DOMContentLoaded', function () {
   ];
 
   toggles.forEach(setupToggle);
+
 
   // Special case for fluid usage (Other, Biodiesel, HighOctaneEthanol)
   const fluidUsageSelect = document.getElementById('fluidUsage');
@@ -313,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // === Your existing PDF generation and validation below ===
 
-  function generatePDF(formData) {
+  async function generatePDFAndZip(formData) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     let y = 10;
@@ -331,15 +341,12 @@ document.addEventListener('DOMContentLoaded', function () {
     formData.forEach((value, key) => {
       const keyLabel = `${formatKey(key)}: `;
       let textValue = value instanceof File ? value.name : value;
-    
-      if (textValue === null || textValue === undefined || textValue === '') {
-        textValue = 'N/A';
-      }
-    
+      if (!textValue) textValue = 'N/A';
+  
       const splitText = doc.splitTextToSize(`${keyLabel}${textValue}`, 180);
       doc.text(splitText, 10, y);
       y += splitText.length * 8;
-    
+  
       if (y > 270) {
         doc.addPage();
         y = 10;
@@ -354,9 +361,72 @@ document.addEventListener('DOMContentLoaded', function () {
         doc.text(`Page ${i} of ${pageCount}`, 200, 290, null, null, 'right');
       }
     };
-  
     addFooters();
-    doc.save('ISSPRO_CR_Request.pdf');
+  
+    const pdfBlob = doc.output("blob");
+  
+    const now = new Date();
+    const pad = n => n.toString().padStart(2, '0');
+    const filename = `Quote_Request_${pad(now.getHours())}-${pad(now.getMinutes())}_${pad(now.getMonth() + 1)}-${pad(now.getDate())}-${now.getFullYear()}.pdf`;
+  
+    const inputs = [
+      document.getElementById("uploadDocs"),
+      document.getElementById("qualityDocUpload"),
+      document.getElementById("modificationDocUpload"),
+      document.getElementById("additionalDocUpload")
+    ];
+  
+    const allFiles = [];
+    inputs.forEach(input => {
+      if (input && input.files) {
+        for (const file of input.files) {
+          allFiles.push(file);
+        }
+      }
+    });
+  
+    const zip = new JSZip();
+    zip.file(filename, pdfBlob);
+    for (const file of allFiles) {
+      zip.file(file.name, file);
+    }
+  
+    const zipBlob = await zip.generateAsync({ type: "blob" });
+    const zipName = filename.replace(".pdf", ".zip");
+  
+    console.log("ZIP file size:", zipBlob.size, "bytes");
+  
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(zipBlob);
+    link.download = zipName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  
+    const MAX_EMAIL_SIZE = 25 * 1024 * 1024;
+    if (zipBlob.size > MAX_EMAIL_SIZE) {
+      alert(`ZIP file size is too large to email (${(zipBlob.size / 1024 / 1024).toFixed(2)} MB).\n\nPlease contact danielb@isspro.com for assistance on how to share.`);
+      return;
+    }
+  
+    const formDataToSend = new FormData();
+    formDataToSend.append("zipFile", zipBlob, zipName); // <-- updated key here
+  
+    try {
+      const response = await fetch("https://isspro-cr-generation-backend.onrender.com/upload", { // <-- updated URL here
+        method: "POST",
+        body: formDataToSend,
+      });
+  
+      if (response.ok) {
+        alert("ZIP file downloaded and email sent to ISSPRO! Thank you for contacting ISSPRO! We are reviewing your request and will reach out if we have any questions.");
+      } else {
+        alert("ZIP downloaded, but failed to send email.");
+      }
+    } catch (error) {
+      console.error("Email error:", error);
+      alert("ZIP downloaded, but an error occurred while sending the email.");
+    }
   }
 
   function validateForm() {
@@ -365,8 +435,8 @@ document.addEventListener('DOMContentLoaded', function () {
     let missingFields = [];
     let firstInvalidField = null;
   
+    // Validate regular required fields
     requiredFields.forEach(field => {
-      // Reset previous styles
       field.style.border = '';
   
       if (!field.value.trim()) {
@@ -375,10 +445,27 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         isValid = false;
         missingFields.push(field.name || field.id);
-        // Add red border
         field.style.border = '2px solid red';
       }
     });
+  
+    // ✅ Validate checkbox group
+    const qualityDocsGroup = document.getElementById('qualityDocsGroup');
+    if (qualityDocsGroup) {
+      const checkboxes = qualityDocsGroup.querySelectorAll('input[type="checkbox"]');
+      const oneChecked = Array.from(checkboxes).some(cb => cb.checked);
+  
+      if (!oneChecked) {
+        isValid = false;
+        missingFields.push('Quality Documents');
+        if (!firstInvalidField) {
+          firstInvalidField = checkboxes[0];
+        }
+        qualityDocsGroup.style.border = '2px solid red';
+      } else {
+        qualityDocsGroup.style.border = ''; // reset if valid
+      }
+    }
   
     if (!isValid) {
       firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -395,25 +482,7 @@ document.getElementById('generate-pdf-btn').addEventListener('click', function (
   if (!validateForm()) return;
 
   const formData = new FormData(form);
-  generatePDF(formData);
-  document.getElementById('customAlert').style.display = 'block';
-});
-
-// Modal close actions
-document.querySelector('.close').addEventListener('click', function () {
-  document.getElementById('customAlert').style.display = 'none';
-});
-
-document.getElementById('modal-ok-btn').addEventListener('click', function () {
-  document.getElementById('customAlert').style.display = 'none';
-});
-
-// Close modal if user clicks outside content
-window.addEventListener('click', function (event) {
-  const modal = document.getElementById('customAlert');
-  if (event.target === modal) {
-    modal.style.display = 'none';
-  }
+  generatePDFAndZip(formData);
 });
 
   generateSignalTable();

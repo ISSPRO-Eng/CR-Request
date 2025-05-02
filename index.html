@@ -12,16 +12,6 @@
     <p><span class="required">*</span> Required fields</p>
     <form id="main-form">
 
-        <!-- Custom Alert Modal -->
-        <div id="customAlert" class="modal">
-            <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Reminder</h2>
-            <p>Please send the generated PDF, any attached files, and any additional comments to <strong>danielb@isspro.com</strong>.</p>
-            <button id="modal-ok-btn">OK</button>
-            </div>
-        </div>
-
         <!-- Basic Info Section -->
         <fieldset>
             <legend>Basic Information</legend>
@@ -114,7 +104,7 @@
 
             <div class="form-group">
                 <label for="uploadDocs">Upload Additional Documentation</label>
-                <input type="file" id="uploadDocs" name="uploadDocs" />
+                <input type="file" id="uploadDocs" name="uploadDocs" multiple/>
             </div>
             <p id="uploadNotice" class="notice"></p>
         </fieldset>
@@ -174,8 +164,8 @@
             </div>
 
             <!-- Quality Documents -->
-            <div class="form-group">
-                <label>Quality Documents Required</label>
+            <div class="form-group" id="qualityDocsGroup">
+                <label>Quality Documents Required<span class="required">*</span></label>
                 <div class="checkbox-and-comment">
                     <div class="checkbox-group">
                     <label><input type="checkbox" name="firstArticle" /> First Article</label>
@@ -201,8 +191,8 @@
               </div>
               
               <div id="ppapLevelGroup" class="form-group" style="display: none;">
-                <label for="ppapLevel">PPAP Level<span class="required">*</span></label>
-                <select name="ppapLevelSelector" id="ppapLevels">
+                <label for="ppapLevels">PPAP Level<span class="required">*</span></label>
+                <select name="ppapLevels" id="ppapLevels">
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -214,7 +204,7 @@
             <!-- Reference Document Upload -->
             <div class="form-group">
                 <label for="qualityDocUpload">Upload Reference Document</label>
-                <input type="file" id="qualityDocUpload" name="qualityDocUpload" />
+                <input type="file" id="qualityDocUpload" name="qualityDocUpload" multiple />
             </div>
             <p id="qualityDocUploadNotice" class="notice"></p>
         </fieldset>
@@ -249,7 +239,7 @@
                 </div>
                 <div class="form-group">
                     <label for="modificationDocUpload">Upload Reference Document</label>
-                    <input type="file" id="modificationDocUpload" name="modificationDocUpload" />
+                    <input type="file" id="modificationDocUpload" name="modificationDocUpload" multiple />
                 </div>
             </div>
 
@@ -332,14 +322,20 @@
                     </select>
                 </div>
 
-                <!-- Pressure Unit Selection (only shown if Yes) -->
-                <div id="pressureUnitGroup" class="form-group" style="display: none;">
-                    <label for="pressureUnit">Select Pressure Unit<span class="required">*</span></label>
-                    <select id="pressureUnit" name="pressureUnit">
-                        <option value="">-- Please Select --</option>
-                        <option value="PSI">PSI</option>
-                        <option value="Bar">Bar</option>
-                    </select>
+                <!-- Pressure Value and Unit Selection (only shown if Yes) -->
+                <div id="pressureUnitGroup" style="display: none;">
+                    <div class="form-group">
+                        <label for="pressureValue">Specify Pressure Value<span class="required">*</span></label>
+                        <input type="text" id="pressureValue" name="pressureValue" />
+                    </div>
+                    <div class="form-group">
+                        <label for="pressureUnit">Select Pressure Unit<span class="required">*</span></label>
+                        <select id="pressureUnit" name="pressureUnit">
+                            <option value="">-- Please Select --</option>
+                            <option value="PSI">PSI</option>
+                            <option value="Bar">Bar</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Empty Point -->
@@ -417,23 +413,22 @@
                     <label for="capProfile">Cap Profile Selection<span class="required">*</label>
                     <select id="capProfile" name="capProfile">
                         <option value="">Select...</option>
-                        <option value="Standard Height">Standard Height</option>
-                        <option value="Potted">Potted</option>
-                        <option value="Low Profile">Low Profile</option>
+                        <option value="Standard Height, Potted">Standard Height, Potted</option>
                         <option value="Standard Height, Non Potted">Standard Height, Non Potted</option>
+                        <option value="Low Profile">Low Profile</option>
                     </select>
                 </div>
-            </div>
 
-            <!-- Fluid Movement Through Cap -->
-            <div class="form-group">
-                <label for="fluidMovement">Fluid Movement Through Cap<span class="required">*</span></label>
-                <select id="fluidMovement" name="fluidMovement" required>
-                    <option value="">Select...</option>
-                    <option value="None">None</option>
-                    <option value="Return Only">Return Only</option>
-                    <option value="Supply and Return">Supply and Return</option>
-                </select>
+                <!-- Fluid Movement Through Cap -->
+                <div class="form-group">
+                    <label for="fluidMovement">Fluid Movement Through Cap<span class="required">*</span></label>
+                    <select id="fluidMovement" name="fluidMovement">
+                        <option value="">Select...</option>
+                        <option value="None">None</option>
+                        <option value="Return Only">Return Only</option>
+                        <option value="Supply and Return">Supply and Return</option>
+                    </select>
+                </div>
             </div>
   
             <!-- Return Only Details (hidden by default) -->
@@ -498,6 +493,12 @@
                 </select>
             </div>
 
+            <!-- Connector Harness Length Input Textbox (hidden by default) -->
+            <div id="connectorHarnessLengthContainer" class="form-group" style="display: none;">
+                <label for="connectorHarnessLengthInput">Harness Length<span class="required">*</span></label>
+                <input type="text" id="connectorHarnessLengthInput" name="connectorHarnessLengthInput" required>
+            </div>
+
             <!-- Connector Input Textbox (hidden by default) -->
             <div id="connectorOtherContainer" class="form-group" style="display: none;">
                 <label for="connectorOtherInput">Specify Connector Type<span class="required">*</span></label>
@@ -505,7 +506,7 @@
             </div>
 
             <div class="form-group">
-                <label for="connectorSupplier">Connector Supplier</label>
+                <label for="connectorSupplier">Connector Mfg/Supplier</label>
                 <input type="text" id="connectorSupplier" name="connectorSupplier">
             </div>
 
@@ -595,7 +596,7 @@
             <!-- Additional Information Upload -->
             <div class="form-group">
                 <label for="additionalDocUpload">Upload Additonal Documentation (Tank Drawings, Pinout Diagrams, Reference Documents)</label>
-                <input type="file" id="additionalDocUpload" name="additionalDocUpload" />
+                <input type="file" id="additionalDocUpload" name="additionalDocUpload" multiple />
             </div>
             <p id="additionalDocUploadNotice" class="notice"></p>
 
@@ -606,11 +607,12 @@
 
         </fieldset>
 
-        <button id="generate-pdf-btn" type="submit">Generate PDF</button>
+        <button id="generate-pdf-btn" type="submit">Submit Quote Request</button>
     </form>
   </div>
 
   <script src="script.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </body>
 </html>
