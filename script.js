@@ -54,10 +54,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const tbody = document.createElement('tbody');
 
     const rows = [
-        { req: 'Req', signal: 'Sender (Voltage In)', required: true },
-        { req: 'Opt', signal: 'Voltage Output' },
-        { req: 'Req', signal: 'Ground', required: true },
-        { req: 'Opt', signal: 'Alarm' }
+        { signal: 'Sender (Voltage In)', required: true },
+        { signal: 'Voltage Output' },
+        { signal: 'Ground', required: true },
+        { signal: 'Alarm' }
     ];
 
     rows.forEach((rowData, index) => {
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function () {
       trigger: 'connectorType',
       showValue: 'Wire Harness',
       target: 'connectorHarnessLengthContainer',
-      requiredFields: ['connectorHarnessLengthInput'],
+      requiredFields: ['connectorHarnessLengthInput', 'connectorHarnessLengthUnits'],
       displayType: 'flex'
     },
     {
@@ -328,7 +328,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const doc = new jsPDF();
     let y = 10;
   
-    const formatKey = key => key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    const formatKey = key =>
+      key
+        .replace(/([a-z])([A-Z])/g, '$1 $2')   // Add space between camelCase
+        .replace(/_/g, ' ')                    // Replace underscores with spaces
+        .replace(/\b\w/g, l => l.toUpperCase()); // Capitalize first letter of each word
+    
   
     doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
