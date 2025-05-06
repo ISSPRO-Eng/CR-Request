@@ -263,11 +263,11 @@
                     </select>
                 </div>
 
+
                 <!-- Fluid Usage -->
                 <div class="form-group">
-                    <label for="fluidUsage">Fluid Usage<span class="required">*</span></label>
-                    <select id="fluidUsage" name="fluidUsage" required>
-                        <option value="">-- Please Select --</option>
+                    <label for="fluidUsage">Fluid Usage (Ctrl + Click to select multiple) <span class="required">*</span></label>
+                    <select id="fluidUsage" name="fluidUsage" multiple required>
                         <option value="Diesel">Diesel</option>
                         <option value="Unleaded">Unleaded</option>
                         <option value="HydraulicFluid">Hydraulic Fluid</option>
@@ -281,7 +281,7 @@
 
                 <!-- Fluid Usage Details (shown only for Biodiesel, High Octane/Ethanol, or Other) -->
                 <div id="fluidUsageDetails" class="form-group" style="display: none;">
-                    <label for="fluidUsageDetailsInput">Fluid % or Details<span class="required">*</span></label>
+                    <label for="fluidUsageDetailsInput">Fluid % (Specify if multiple types)<span class="required">*</span></label>
                     <input type="text" id="fluidUsageDetailsInput" name="fluidUsageDetailsInput" />
                 </div>
 

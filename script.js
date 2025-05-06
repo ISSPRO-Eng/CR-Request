@@ -252,16 +252,21 @@ document.addEventListener('DOMContentLoaded', function () {
   const fluidUsageDetailsInput = document.getElementById('fluidUsageDetailsInput');
 
   fluidUsageSelect.addEventListener('change', () => {
-    const value = fluidUsageSelect.value;
-    if (['Biodiesel', 'HighOctaneEthanol', 'Other'].includes(value)) {
-      fluidUsageDetails.style.display = 'flex';
-      fluidUsageDetailsInput.required = true;
-    } else {
-      fluidUsageDetails.style.display = 'none';
-      fluidUsageDetailsInput.required = false;
-      fluidUsageDetailsInput.value = '';
-    }
-  });
+  const selectedOptions = Array.from(fluidUsageSelect.selectedOptions);
+  const specialOptions = ['Biodiesel', 'HighOctaneEthanol', 'Other'];
+
+  // Check if any selected option is in the special group
+  const hasSpecialOption = selectedOptions.some(option => specialOptions.includes(option.value));
+
+  if (hasSpecialOption) {
+    fluidUsageDetails.style.display = 'flex';
+    fluidUsageDetailsInput.required = true;
+  } else {
+    fluidUsageDetails.style.display = 'none';
+    fluidUsageDetailsInput.required = false;
+    fluidUsageDetailsInput.value = '';
+  }
+});
 
     // Special case for Custom Resistance Table
   document.getElementById('tableStepCount').addEventListener('input', function () {
