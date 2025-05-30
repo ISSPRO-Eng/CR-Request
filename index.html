@@ -164,20 +164,20 @@
             </div>
 
             <!-- Quality Documents -->
-            <div class="form-group" id="qualityDocsGroup">
-                <label>Quality Documents Required<span class="required">*</span></label>
-                <div class="checkbox-and-comment">
-                    <div class="checkbox-group">
-                    <label><input type="checkbox" name="firstArticle" /> First Article</label>
-                    <label><input type="checkbox" name="psw" /> PSW</label>
-                    <label><input type="checkbox" name="certOfCompliance" /> Certificate of Compliance</label>
-                    <label><input type="checkbox" name="otherDocs" id="otherDocs" /> Other</label>
-                  </div>
-                  <div id="otherDocsCommentContainer" style="display:none;">
-                    <label for="otherDocsComment">Other Documents Comment</label>
-                    <textarea id="otherDocsComment" name="otherDocsComment"></textarea>
-                  </div>
-                </div>
+            <div class="form-group">
+                <label for="qualityDocs">Quality Docs Required (Ctrl + Click to select multiple) <span class="required">*</span></label>
+                <select id="qualityDocs" name="qualityDocs" multiple required>
+                    <option value="firstArticle">First Article</option>
+                    <option value="psw">PSW</option>
+                    <option value="certOfCompliance">Certificate of Compliance</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <!-- Q Docs Details (shown only for Other) -->
+            <div id="otherDocsCommentContainer" class="form-group" style="display: none;">
+                <label for="otherDocsComment">Specify Other<span class="required">*</span></label>
+                <input type="text" id="otherDocsComment" name="otherDocsComment" />
             </div>
 
             <!-- PPAP Requirement -->
@@ -257,7 +257,7 @@
                 <div class="form-group">
                     <label for="senderLengthUnits">Sender Units <span class="required">*</span></label>
                     <select id="senderLengthUnits" name="senderLengthUnits" required>
-                        <option value="">-- Select --</option>
+                        <option value="">Select...</option>
                         <option value="Inch">Inches</option>
                         <option value="mm">Millimeters</option>
                     </select>
@@ -289,7 +289,7 @@
                <div class="form-group">
                     <label for="fullestPoint">Fullest Point<span class="required">*</span></label>
                     <select id="fullestPoint" name="fullestPoint" required>
-                       <option value="">-- Please Select --</option>
+                       <option value="">Select...</option>
                        <option value="Top">Top of Tank</option>
                        <option value="Base">Base of Filler Neck</option>
                        <option value="Other">Other</option>
@@ -305,7 +305,7 @@
                     <div class = "form-group">
                         <label for="fullestPointUnits">Fullest Point Units <span class="required">*</span></label>
                         <select id="fullestPointUnits" name="fullestPointUnits" required>
-                            <option value="">-- Select --</option>
+                            <option value="">Select...</option>
                             <option value="Inch">Inches</option>
                             <option value="mm">Millimeters</option>
                         </select>
@@ -316,7 +316,7 @@
                 <div class="form-group">
                     <label for="pressurizedTank">Is this a Pressurized Tank?<span class="required">*</span></label>
                     <select id="pressurizedTank" name="pressurizedTank" required>
-                        <option value="">-- Please Select --</option>
+                        <option value="">Select...</option>
                         <option value="No">No</option>
                         <option value="Yes">Yes</option>
                     </select>
@@ -331,7 +331,7 @@
                     <div class="form-group">
                         <label for="pressureUnit">Select Pressure Unit<span class="required">*</span></label>
                         <select id="pressureUnit" name="pressureUnit">
-                            <option value="">-- Please Select --</option>
+                            <option value="">Select...</option>
                             <option value="PSI">PSI</option>
                             <option value="Bar">Bar</option>
                         </select>
@@ -342,7 +342,7 @@
                 <div class="form-group">
                     <label for="emptyPoint">Empty Point<span class="required">*</span></label>
                     <select id="emptyPoint" name="emptyPoint" required>
-                        <option value="">-- Please Select --</option>
+                        <option value="">Select...</option>
                         <option value="Default">ISSPRO Default (Lowest Possible)</option>
                         <option value="Other">Other</option>
                     </select>
@@ -357,7 +357,7 @@
                     <div class = "form-group">
                         <label for="emptyPointUnits">Empty Point Units <span class="required">*</span></label>
                         <select id="emptyPointUnits" name="emptyPointUnits" required>
-                            <option value="">-- Select --</option>
+                            <option value="">Select...</option>
                             <option value="Inch">Inches</option>
                             <option value="mm">Millimeters</option>
                         </select>
@@ -368,7 +368,7 @@
                 <div class="form-group">
                     <label for="boltPattern">Mounting Bolt Pattern<span class="required">*</span></label>
                     <select id="boltPattern" name="boltPattern" required>
-                        <option value="">-- Please Select --</option>
+                        <option value="">Select...</option>
                         <option value="StandardSAE">Standard SAE</option>
                         <option value="Symmetrical">Symmetrical</option>
                         <option value="RFM">RFM (Retaining Flange Mount)</option>
@@ -442,7 +442,7 @@
                     <label for="returnTubeLength">Return Tube Length (from Flange)<span class="required">*</span></label>
                     <input type="text" id="returnTubeLength" name="returnTubeLength">
                     <select id="returnTubeLengthUnits" name="returnTubeLengthUnits">
-                        <option value="">Select Units...</option>
+                        <option value="">Select...</option>
                         <option value="Inches">Inches</option>
                         <option value="Millimeters">Millimeters</option>
                     </select>
@@ -460,7 +460,7 @@
                     <label for="supplyTubeLength">Supply Tube Length (from Flange)<span class="required">*</span></label>
                     <input type="text" id="supplyTubeLength" name="supplyTubeLength">
                     <select id="supplyTubeLengthUnits" name="supplyTubeLengthUnits">
-                        <option value="">Select Units...</option>
+                        <option value="">Select...</option>
                         <option value="Inches">Inches</option>
                         <option value="Millimeters">Millimeters</option>
                     </select>
@@ -498,7 +498,7 @@
                 <label for="connectorHarnessLengthInput">Harness Length<span class="required">*</span></label>
                 <input type="text" id="connectorHarnessLengthInput" name="connectorHarnessLengthInput" required>
                 <select id="connectorHarnessLengthUnits" name="connectorHarnessLengthUnits">
-                    <option value="">Select Units...</option>
+                    <option value="">Select...</option>
                     <option value="Inches">Inches</option>
                     <option value="Millimeters">Millimeters</option>
                 </select>
@@ -521,7 +521,7 @@
                     <label for="harnessLength">Harness Length<span class="required">*</span></label>
                     <input type="text" id="harnessLength" name="harnessLength">
                     <select id="harnessLengthUnits" name="harnessLengthUnits">
-                        <option value="">Select Units...</option>
+                        <option value="">Select...</option>
                         <option value="Inches">Inches</option>
                         <option value="Millimeters">Millimeters</option>
                     </select>
