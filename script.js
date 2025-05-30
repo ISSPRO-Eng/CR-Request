@@ -143,13 +143,6 @@ document.addEventListener('DOMContentLoaded', function () {
                        'pressurizedTank', 'emptyPoint', 'boltPattern', 'mountingFasteners', 'capProfile', 'fluidMovement']
     },
     {
-      trigger: 'fluidUsage',
-      showValue: 'Other',
-      target: 'fluidUsageDetails',
-      requiredFields: ['fluidUsageDetailsInput'],
-      displayType: 'flex'
-    },
-    {
       trigger: 'fullestPoint',
       showValue: 'Other',
       target: 'fullestPointDetails',
@@ -245,6 +238,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
   toggles.forEach(setupToggle);
 
+  // Special case for Quality Docs Other 
+  const qualityDocsSelect = document.getElementById('qualityDocs');
+  const otherDocsCommentContainer = document.getElementById('otherDocsCommentContainer');
+  const otherDocsComment = document.getElementById('otherDocsComment');
+
+  qualityDocsSelect.addEventListener('change', () => {
+  const selectedOptions = Array.from(qualityDocsSelect.selectedOptions);
+  const specialOptions = ['Other'];
+
+  // Check if any selected option is in the special group
+  const hasSpecialOption = selectedOptions.some(option => specialOptions.includes(option.value));
+
+  if (hasSpecialOption) {
+    otherDocsCommentContainer.style.display = 'flex';
+    otherDocsComment.required = true;
+  } else {
+    otherDocsCommentContainer.style.display = 'none';
+    otherDocsComment.required = false;
+    otherDocsComment.value = '';
+  }
+});
+
 
   // Special case for fluid usage (Other, Biodiesel, HighOctaneEthanol)
   const fluidUsageSelect = document.getElementById('fluidUsage');
@@ -326,6 +341,32 @@ document.addEventListener('DOMContentLoaded', function () {
     tableContainer.style.display = 'block';
 });
 
+function getValueFromElement(key) {
+  const element = document.getElementById(key);
+  if (!element) {
+    console.warn(`No element found for key: ${key}`);
+    return null;
+  }
+
+  if (element.type === 'checkbox') {
+    return element.checked ? 'Yes' : 'No';
+  }
+
+  if (element.tagName === 'SELECT') {
+    if (element.multiple) {
+      const selected = Array.from(element.selectedOptions)
+        .map(opt => opt.text.trim())
+        .filter(Boolean);
+      return selected.length > 0 ? selected.join(', ') : 'N/A';
+    } else {
+      const selectedOption = element.options[element.selectedIndex];
+      return selectedOption?.value === '' ? 'N/A' : selectedOption.text.trim();
+    }
+  }
+
+  return element.value?.trim() || element.textContent.trim() || 'N/A';
+}
+
   // === Your existing PDF generation and validation below ===
 
   async function generatePDFAndZip(formData) {
@@ -338,31 +379,146 @@ document.addEventListener('DOMContentLoaded', function () {
         .replace(/([a-z])([A-Z])/g, '$1 $2')   // Add space between camelCase
         .replace(/_/g, ' ')                    // Replace underscores with spaces
         .replace(/\b\w/g, l => l.toUpperCase()); // Capitalize first letter of each word
-    
   
+    // Define your sections with titles and keys
+    const sections = [
+      {
+        title: "Company Information",
+        keys: [
+          "companyName", "companyAddress", "companyCityStateZip", "contactName", "contactTitle",
+          "contactEmail", "contactPhone", "contactFax", "addContactDropdown",
+          "additionalContact1Name", "additionalContact1Title", "additionalContact1Email", "additionalContact1Phone"
+        ],
+      },
+      {
+        title: "Shipping Information",
+        keys: [
+          "packagingReqs", "shippingReqs", "uploadDocs"
+        ],
+      },
+      {
+        title: "Product Timeline",
+        keys: [
+          "productionDate", "annualUsage", "requirePrototypes", "prototypeCount"
+        ],
+      },
+      {
+        title: "Quality Requirements",
+        keys: [
+          "qualityManagerName", "qualityManagerEmail", "qualityManagerPhone", "qualityManagerFax",
+          "ppapRequired", "ppapLevels", "qualityDocs", "otherDocsComment", "qualityDocUpload"
+        ],
+      },
+      {
+        title: "Mechanical Requirements",
+        keys: [
+          "partDesign", "existingPartNumber", "newPartNumber", "modificationRequested", "modificationDocUpload",
+          "clientPartNumber", "senderLength", "senderLengthUnits", "fluidUsage", "fluidUsageDetailsInput",
+          "fullestPoint", "fullestPointSpecify", "fullestPointUnits", "pressurizedTank", "pressureValue",
+          "pressureUnit", "emptyPoint", "emptyPointSpecify", "emptyPointUnits", "boltPattern", "otherBoltPattern",
+          "mountingFasteners", "mountingFastenersOtherInput", "capProfile", "fluidMovement", "returnFittingDetails",
+          "returnTubeLength", "returnTubeLengthUnits", "supplyFittingDetails", "supplyTubeLength",
+          "supplyTubeLengthUnits", "supplyFilterDetails"
+        ],
+      },
+
+      {
+        title: "Sender Output Requirements",
+        keys: [
+          "connectorPN", "connectorType", "connectorHarnessLengthInput",
+          "connectorHarnessLengthUnits", "connectorOtherInput", "connectorSupplier", "harnessLength",
+          "harnessLengthUnits", "systemVoltage", "senderOutput", "resistanceAtFull", "resistanceAtEmpty",
+          "customResistance", "tableStepCount", "voltageAtFull", "VoltageAtEmpty", "senderAlarms",
+          "wireColor0", "connectorPosition0", "wireColor1", "connectorPosition1", "wireColor2",
+          "connectorPosition2", "wireColor3", "connectorPosition3"
+        ],
+      },
+      {
+        title: "Additional Information",
+        keys: [
+          "additionalDocUpload", "additionalDetails"
+        ],
+      },
+    ];
+  
+    // Print main header
     doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
     doc.text('ISSPRO CR Request Summary', 10, y);
-    y += 10;
+    y += 12;
   
     doc.setFontSize(12);
-    doc.setFont("helvetica", "normal");
+    doc.setFont("helvetica", "bold");
   
-    formData.forEach((value, key) => {
-      const keyLabel = `${formatKey(key)}: `;
-      let textValue = value instanceof File ? value.name : value;
-      if (!textValue) textValue = 'N/A';
-  
-      const splitText = doc.splitTextToSize(`${keyLabel}${textValue}`, 180);
-      doc.text(splitText, 10, y);
-      y += splitText.length * 8;
-  
-      if (y > 270) {
-        doc.addPage();
-        y = 10;
+    // Loop through each section
+    for (const section of sections) {
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.text(section.title, 10, y);
+      y += 8;
+    
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "normal");
+    
+      for (const key of section.keys) {
+        try {
+          const value = getValueFromElement(key);
+          if (value !== null && value !== "") {
+            const label = formatKey(key);
+            const line = `${label}: ${value}`;
+            const splitLine = doc.splitTextToSize(line, 180);
+            doc.text(splitLine, 10, y);
+            y += splitLine.length * 8;
+      
+            if (y > 270) {
+              doc.addPage();
+              y = 10;
+            }
+          }
+        } catch (err) {
+          console.error(`Error processing key: ${key}`, err);
+        }
       }
-    });
+
+      // ✅ INSERT CUSTOM TABLE IN "Sender Output Requirements"
+      if (section.title === "Sender Output Requirements") {
+        const tableContainer = document.getElementById('generatedResistanceTableContainer');
+        if (tableContainer && tableContainer.style.display !== 'none') {
+          const rows = tableContainer.querySelectorAll('tbody tr');
+          if (rows.length > 0) {
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "bold");
+            doc.text('Custom Resistance Table', 10, y);
+            y += 10;
+    
+            doc.setFont("helvetica", "normal");
+    
+            for (const row of rows) {
+              const levelInput = row.querySelector('input[name^="level_"]');
+              const ohmsInput = row.querySelector('input[name^="ohms_"]');
+    
+              const level = levelInput?.value || 'N/A';
+              const ohms = ohmsInput?.value || 'N/A';
+    
+              const line = `Level: ${level}, Ohms: ${ohms}`;
+              const splitLine = doc.splitTextToSize(line, 180);
+              doc.text(splitLine, 10, y);
+              y += splitLine.length * 8;
+    
+              if (y > 270) {
+                doc.addPage();
+                y = 10;
+              }
+            }
+          }
+        }
+      }
+    
+      y += 8; // Add space after section
+      doc.setFont("helvetica", "bold");
+    }
   
+    // Add footers
     const addFooters = () => {
       const pageCount = doc.internal.getNumberOfPages();
       for (let i = 1; i <= pageCount; i++) {
@@ -421,7 +577,7 @@ document.addEventListener('DOMContentLoaded', function () {
   
     const formDataToSend = new FormData();
     formDataToSend.append("zipFile", zipBlob, zipName); // <-- updated key here
-  
+  /*
     try {
       const response = await fetch("https://isspro-cr-generation-backend.onrender.com/upload", { // <-- updated URL here
         method: "POST",
@@ -437,6 +593,7 @@ document.addEventListener('DOMContentLoaded', function () {
       console.error("Email error:", error);
       alert("ZIP downloaded, but an error occurred while sending the email.");
     }
+    */
   }
 
   function validateForm() {
